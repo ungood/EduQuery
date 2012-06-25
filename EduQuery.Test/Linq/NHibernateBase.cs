@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EduQuery.Model;
+using EduQuery.Test.Model;
 using NHibernate;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Mapping;
 using NHibernate.Cfg;
+using NHibernate.Linq;
 using NUnit.Framework;
 using SessionProperties = NHibernate.Cfg.Environment;
 
 namespace EduQuery.Test
 {
-    
-
     public abstract class NHibernateBase
     {
         public static ISessionFactory CreateSessionFactory(out Configuration configuration)

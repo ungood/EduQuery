@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EduQuery.Model
+namespace EduQuery.Test.Model
 {
     public class OrderDetail
     {

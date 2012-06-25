@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using EduQuery.Model;
+using EduQuery.Test.Model;
 using NUnit.Framework;
 
-namespace EduQuery.Test
+namespace EduQuery.Test.Linq
 {
     [TestFixture]
     public class FrameworkTest : NHibernateBase
