@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using EduQuery.Dialect;
 
 namespace EduQuery.Query
@@ -32,9 +33,32 @@ namespace EduQuery.Query
 
                 using(var reader = command.ExecuteReader())
                 {
-                    throw new NotImplementedException();
+                    while (reader.Read())
+                        yield return Deserialize<T>(reader);
                 }
             }
+        }
+
+        private static T Deserialize<T>(IDataRecord reader)
+        {
+            var instance = Activator.CreateInstance<T>();
+
+            var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .ToDictionary(pi => pi.Name);
+
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                var columnName = reader.GetName(i);
+                if (!properties.ContainsKey(columnName))
+                    throw new Exception(string.Format("Could not map columnt '{0}' to type '{1}'", columnName, typeof(T).Name));
+
+                var pi = properties[columnName];
+                var converted = Convert.ChangeType(reader.GetValue(i), pi.PropertyType);
+
+                pi.SetValue(instance, converted, null);
+            }
+
+            return instance;
         }
     }
 }

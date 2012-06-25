@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using EduQuery.Query;
 
 namespace EduQuery.Dialect
@@ -13,7 +14,32 @@ namespace EduQuery.Dialect
     {
         public void ConfigureCommand<TOut>(IDbCommand command, SqlQuery<TOut> sqlQuery)
         {
-            throw new NotImplementedException();
+            var outType = typeof(TOut);
+
+            var tableName = GetTableName(outType);
+
+            var columnNames = outType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Select(GetColumnName)
+                .ToArray();
+
+            command.CommandText = string.Format("SELECT {0} FROM {1}",
+                string.Join(", ", columnNames),
+                tableName);
+        }
+        
+        private static string GetTableName(Type type)
+        {
+            return EscapeIdentifier(type.Name);
+        }
+
+        private static string GetColumnName(MemberInfo mi)
+        {
+            return EscapeIdentifier(mi.Name);
+        }
+
+        private static string EscapeIdentifier(string identifer)
+        {
+            return "[" + identifer + "]";
         }
     }
 }
